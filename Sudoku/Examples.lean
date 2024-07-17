@@ -17,15 +17,9 @@ theorem test_solve (g : Grid) (hg : SudokuRules g)
   · apply cell_elim hg
     intro n hn hn'
     fin_cases hn <;> simp at hn' ⊢
-    · rw [←hg_0_0]
-      apply hg.row_check
-      decide
-    · rw [←hg_0_1]
-      apply hg.row_check
-      decide
-    · simp_rw [←hg_0_3]
-      apply hg.row_check
-      decide
+    · exact row_conflict hg (by decide) hg_0_0
+    · exact row_conflict hg (by decide) hg_0_1
+    · exact row_conflict hg (by decide) hg_0_3
   simp [Progress.set']
   apply Solvable.Done
   · decide

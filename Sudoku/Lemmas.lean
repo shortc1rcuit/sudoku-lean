@@ -11,3 +11,8 @@ lemma cell_elim {g : Grid} (hg : SudokuRules g) {c : Coords} {n : ℕ} (hc : ∀
     · rw [ha']
       exact this
     · exact hc a ha ha'
+
+lemma row_conflict {g : Grid} (hg : SudokuRules g) {row a b : Fin 4} (hab : a ≠ b) {n : ℕ} (hg' : g (row, a) = n) : g (row, b) ≠ n := by
+  rw [←hg']
+  apply hg.row_check
+  exact hab.symm
