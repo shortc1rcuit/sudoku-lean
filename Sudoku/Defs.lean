@@ -3,19 +3,20 @@ import Mathlib.Tactic
 abbrev Coords := Fin 4 × Fin 4
 
 --The Grid function is the "Pure" version of the sudoku that we write propositions about.
-abbrev Grid := Coords → Fin 4
+abbrev Grid := Coords → ℕ
 
 --The equations are written this way such that SudokuRules is Decideable.
 structure SudokuRules (grid : Grid) : Prop where
-  row_check : ∀ row a b: Fin 4, a ≠ b → grid (row, a) ≠ grid (row, b)
-  col_check : ∀ col a b: Fin 4, a ≠ b → grid (a, col) ≠ grid (b, col)
-  reg_check : ∀ reg₁ reg₂ a₁ a₂ b₁ b₂: Fin 2, (a₁, a₂) ≠ (b₁, b₂) → grid (2 * reg₁ + a₁, 2 * reg₂ + a₂) ≠ grid (2 * reg₁ + b₁, 2 * reg₂ + b₂)
+  cases : ∀ c : Coords, grid c ∈ Finset.Icc 1 4
+  row_check : ∀ row a b : Fin 4, a ≠ b → grid (row, a) ≠ grid (row, b)
+  col_check : ∀ col a b : Fin 4, a ≠ b → grid (a, col) ≠ grid (b, col)
+  reg_check : ∀ reg₁ reg₂ a₁ a₂ b₁ b₂ : Fin 2, (a₁, a₂) ≠ (b₁, b₂) → grid (2 * reg₁ + a₁, 2 * reg₂ + a₂) ≠ grid (2 * reg₁ + b₁, 2 * reg₂ + b₂)
 
 --Progress represents what parts of the sudoku we do and don't know.
-abbrev Progress := List (List (Option (Fin 4)))
+abbrev Progress := List (List (Option ℕ))
 
 def Progress.get (p : Progress) (c : Coords) := (p.get! c.1).get! c.2
-def Progress.set' (p : Progress) (c : Coords) (n : Option (Fin 4)) : Progress :=
+def Progress.set' (p : Progress) (c : Coords) (n : Option ℕ) : Progress :=
   p.set c.1 ((p.get! c.1).set c.2 n)
 
 def filled : Progress := [[some 1, some 2, some 3, some 4],
@@ -28,9 +29,10 @@ lemma filled_filled : ∀ (c: Coords), (filled.get c).isSome = true := by
 
 theorem filled_valid : SudokuRules (fun c => (filled.get c).get (filled_filled c)) := by
   constructor
-  decide
-  decide
-  decide
+  · decide
+  · decide
+  · decide
+  · decide
 
 /-
 The Sudoku will be implemented similar to https://github.com/dwrensha/animate-lean-proofs/blob/main/Chess.lean
@@ -59,15 +61,10 @@ theorem test_solve (g : Grid) (hg : SudokuRules g)
   unfold test
   apply Solvable.Set _ _ (0, 2) 3
   · decide
-  · set a := g (0, 2) with ha
+  · have := hg.cases (0, 2)
+    set a := g (0, 2) with ha
     clear_value a
-    fin_cases a <;> simp at ha
-    · absurd ha
-      reduce at hg_0_3
-      simp at hg_0_3
-      nth_rewrite 1 [←hg_0_3]
-      apply hg.row_check
-      decide
+    fin_cases this <;> simp at ha <;> simp
     · absurd ha
       rw [←hg_0_0]
       apply hg.row_check
@@ -77,6 +74,10 @@ theorem test_solve (g : Grid) (hg : SudokuRules g)
       apply hg.row_check
       decide
     · rfl
+    · absurd ha
+      nth_rewrite 1 [←hg_0_3]
+      apply hg.row_check
+      decide
   simp [Progress.set']
   apply Solvable.Done
   · decide
