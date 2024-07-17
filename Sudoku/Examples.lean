@@ -1,4 +1,4 @@
-import Sudoku.Defs
+import Sudoku.Lemmas
 
 def test : Progress := [[some 1, some 2, none,   some 4],
                         [some 3, some 4, some 1, some 2],
@@ -14,21 +14,16 @@ theorem test_solve (g : Grid) (hg : SudokuRules g)
   unfold test
   apply Solvable.Set _ _ (0, 2) 3
   · decide
-  · have := hg.cases (0, 2)
-    set a := g (0, 2) with ha
-    clear_value a
-    fin_cases this <;> simp at ha <;> simp
-    · absurd ha
-      rw [←hg_0_0]
+  · apply cell_elim hg
+    intro n hn hn'
+    fin_cases hn <;> simp at hn' ⊢
+    · rw [←hg_0_0]
       apply hg.row_check
       decide
-    · absurd ha
-      nth_rewrite 1 [←hg_0_1]
+    · rw [←hg_0_1]
       apply hg.row_check
       decide
-    · rfl
-    · absurd ha
-      nth_rewrite 1 [←hg_0_3]
+    · simp_rw [←hg_0_3]
       apply hg.row_check
       decide
   simp [Progress.set']

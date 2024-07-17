@@ -29,5 +29,5 @@ Done, when applied, will create two goals, one which states that all the cells i
 -/
 
 inductive Solvable : Grid → Progress → Prop where
-| Set (grid : Grid) (progress : Progress) (c : Coords) (n : Fin 4) : (progress.get c).isNone = true → grid c = n → (Solvable grid (progress.set' c (some n))) → (Solvable grid progress)
+| Set (grid : Grid) (progress : Progress) (c : Coords) (n : ℕ) : (progress.get c).isNone = true → grid c = n → (Solvable grid (progress.set' c (some n))) → (Solvable grid progress)
 | Done (grid : Grid) (progress : Progress) : (∀ (c: Coords), (progress.get c).isSome = true) → SudokuRules (fun c => (progress.get c).get!) → Solvable grid progress
