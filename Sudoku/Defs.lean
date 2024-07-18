@@ -10,7 +10,7 @@ structure SudokuRules (grid : Grid) : Prop where
   cases : ∀ c : Coords, grid c ∈ Finset.Icc 1 4
   row_check : ∀ row a b : Fin 4, a ≠ b → grid (row, a) ≠ grid (row, b)
   col_check : ∀ col a b : Fin 4, a ≠ b → grid (a, col) ≠ grid (b, col)
-  reg_check : ∀ reg₁ reg₂ a₁ a₂ b₁ b₂ : Fin 2, (a₁, a₂) ≠ (b₁, b₂) → grid (2 * reg₁ + a₁, 2 * reg₂ + a₂) ≠ grid (2 * reg₁ + b₁, 2 * reg₂ + b₂)
+  reg_check : ∀ c₁ c₂ : Coords, c₁ ≠ c₂ → c₁.1 / 2 = c₂.1 / 2 ∧ c₁.2 / 2 = c₂.2 / 2 → grid c₁ ≠ grid c₂
 
 --Progress represents what parts of the sudoku we do and don't know.
 abbrev Progress := List (List (Option ℕ))

@@ -42,7 +42,7 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     · simp [hg_1_0]
     · exact col_conflict hg (by decide) hg_0_1
     · exact col_conflict hg (by decide) hg_3_2
-  apply Solvable.Set _ _ (1, 3) 1 (by decide) hg_1_3
+  apply Solvable.Set _ _ _ _ (by decide) hg_1_3
   dsimp [Progress.set', List.get!, List.set]
   have hg_0_3 : g (0, 3) = 2 := by
     apply col_elim hg (by decide)
@@ -51,6 +51,16 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     · simp [hg_1_3]
     · simp [hg_2_3]
     · exact row_conflict hg (by decide) hg_3_1
-  apply Solvable.Set _ _ (0, 3) 2 (by decide) hg_0_3
+  apply Solvable.Set _ _ _ _ (by decide) hg_0_3
   dsimp [Progress.set', List.get!, List.set]
+  have hg_1_2 : g (1, 2) = 4 := by
+    apply cell_elim hg
+    intro n hn hn'
+    fin_cases hn <;> simp [-ne_eq] at hn' ⊢ <;> first | (absurd hn'; rfl) | clear hn'
+    · exact reg_conflict hg (by decide) (by decide) hg_1_3
+    · exact reg_conflict hg (by decide) (by decide) hg_0_3
+    · exact reg_conflict hg (by decide) (by decide) hg_0_2
+  apply Solvable.Set _ _ _ _ (by decide) hg_1_2
+  dsimp [Progress.set', List.get!, List.set]
+
   sorry

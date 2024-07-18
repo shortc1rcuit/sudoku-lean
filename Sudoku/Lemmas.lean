@@ -14,8 +14,7 @@ lemma cell_elim {g : Grid} (hg : SudokuRules g) {c : Coords} {n : ℕ} (hc : ∀
 
 lemma row_conflict {g : Grid} (hg : SudokuRules g) {row a b : Fin 4} (hab : a ≠ b) {n : ℕ} (hg' : g (row, a) = n) : g (row, b) ≠ n := by
   rw [←hg']
-  apply hg.row_check
-  exact hab.symm
+  apply hg.row_check _ _ _ hab.symm
 
 def row_emb {g : Grid} (hg : SudokuRules g) (row : Fin 4) : Fin 4 ↪ ℕ where
   toFun := fun a => g (row, a)
@@ -44,8 +43,7 @@ lemma row_elim {g : Grid} (hg : SudokuRules g) {row a : Fin 4} {n : ℕ} (hn : n
 
 lemma col_conflict {g : Grid} (hg : SudokuRules g) {col a b : Fin 4} (hab : a ≠ b) {n : ℕ} (hg' : g (a, col) = n) : g (b, col) ≠ n := by
   rw [←hg']
-  apply hg.col_check
-  exact hab.symm
+  apply hg.col_check _ _ _ hab.symm
 
 def col_emb {g : Grid} (hg : SudokuRules g) (col : Fin 4) : Fin 4 ↪ ℕ where
   toFun := fun a => g (a, col)
@@ -71,3 +69,7 @@ lemma col_elim {g : Grid} (hg : SudokuRules g) {col a : Fin 4} {n : ℕ} (hn : n
   · rw [ha']
     exact hn
   · exact h_col a' ha'
+
+lemma reg_conflict {g : Grid} (hg : SudokuRules g) {c₁ c₂ : Coords} (hc : c₁ ≠ c₂) (hc' : c₁.1 / 2 = c₂.1 / 2 ∧ c₁.2 / 2 = c₂.2 / 2) (hg' : g c₁ = n) : g c₂ ≠ n := by
+  rw [←hg']
+  exact Ne.symm (hg.reg_check _ _ hc hc')
