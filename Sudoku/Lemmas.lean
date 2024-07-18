@@ -46,3 +46,28 @@ lemma col_conflict {g : Grid} (hg : SudokuRules g) {col a b : Fin 4} (hab : a �
   rw [←hg']
   apply hg.col_check
   exact hab.symm
+
+def col_emb {g : Grid} (hg : SudokuRules g) (col : Fin 4) : Fin 4 ↪ ℕ where
+  toFun := fun a => g (a, col)
+  inj' := by
+    intro a b hab
+    contrapose! hab
+    exact hg.col_check col a b hab
+
+lemma col_map {g : Grid} (hg : SudokuRules g) (col : Fin 4) : Finset.map (col_emb hg col) Finset.univ = Finset.Icc 1 4 := by
+  apply Finset.eq_of_subset_of_card_le
+  · intro n hn
+    simp [col_emb] at hn
+    obtain ⟨a, ha⟩ := hn
+    rw [←ha]
+    apply hg.cases
+  · simp
+
+lemma col_elim {g : Grid} (hg : SudokuRules g) {col a : Fin 4} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_col : ∀ b ≠ a, g (b, col) ≠ n) : g (a, col) = n := by
+  simp [←col_map hg col, col_emb] at hn
+  contrapose! hn
+  intro a'
+  obtain ha' | ha' := eq_or_ne a' a
+  · rw [ha']
+    exact hn
+  · exact h_col a' ha'
