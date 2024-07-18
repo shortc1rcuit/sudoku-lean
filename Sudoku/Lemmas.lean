@@ -41,3 +41,8 @@ lemma row_elim {g : Grid} (hg : SudokuRules g) {row a : Fin 4} {n : ℕ} (hn : n
   · rw [ha']
     exact hn
   · exact h_row a' ha'
+
+lemma col_conflict {g : Grid} (hg : SudokuRules g) {col a b : Fin 4} (hab : a ≠ b) {n : ℕ} (hg' : g (a, col) = n) : g (b, col) ≠ n := by
+  rw [←hg']
+  apply hg.col_check
+  exact hab.symm

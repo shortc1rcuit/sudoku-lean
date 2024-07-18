@@ -40,8 +40,8 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     intro b hb
     fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
     · simp [hg_1_0]
-    · sorry
-    · sorry
+    · exact col_conflict hg (by decide) hg_0_1
+    · exact col_conflict hg (by decide) hg_3_2
   apply Solvable.Set _ _ (1, 3) 1 (by decide) hg_1_3
   dsimp [Progress.set', List.get!, List.set]
   sorry
