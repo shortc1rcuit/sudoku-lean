@@ -16,3 +16,28 @@ lemma row_conflict {g : Grid} (hg : SudokuRules g) {row a b : Fin 4} (hab : a �
   rw [←hg']
   apply hg.row_check
   exact hab.symm
+
+def row_emb {g : Grid} (hg : SudokuRules g) (row : Fin 4) : Fin 4 ↪ ℕ where
+  toFun := fun a => g (row, a)
+  inj' := by
+    intro a b hab
+    contrapose! hab
+    exact hg.row_check row a b hab
+
+lemma row_map {g : Grid} (hg : SudokuRules g) (row : Fin 4) : Finset.map (row_emb hg row) Finset.univ = Finset.Icc 1 4 := by
+  apply Finset.eq_of_subset_of_card_le
+  · intro n hn
+    simp [row_emb] at hn
+    obtain ⟨a, ha⟩ := hn
+    rw [←ha]
+    apply hg.cases
+  · simp
+
+lemma row_elim {g : Grid} (hg : SudokuRules g) {row a : Fin 4} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_row : ∀ b ≠ a, g (row, b) ≠ n) : g (row, a) = n := by
+  simp [←row_map hg row, row_emb] at hn
+  contrapose! hn
+  intro a'
+  obtain ha' | ha' := eq_or_ne a' a
+  · rw [ha']
+    exact hn
+  · exact h_row a' ha'
