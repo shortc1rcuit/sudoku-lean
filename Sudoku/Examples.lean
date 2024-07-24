@@ -62,5 +62,11 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     · exact reg_conflict hg (by decide) (by decide) hg_0_2
   apply Solvable.Set _ _ _ _ (by decide) hg_1_2
   dsimp [Progress.set', List.get!, List.set]
-
+  have hg_3_0 : g (3, 0) = 3 := by
+    apply reg_elim hg (by decide)
+    intro c hc
+    fin_cases c <;> simp [-ne_eq, reg_coords] at hc ⊢ <;> clear hc
+    · exact row_conflict hg (by decide) hg_2_3
+    · exact row_conflict hg (by decide) hg_2_3
+    · simp [hg_3_1]
   sorry

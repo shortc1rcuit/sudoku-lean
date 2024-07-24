@@ -5,12 +5,15 @@ abbrev Coords := Fin 4 × Fin 4
 --The Grid function is the "Pure" version of the sudoku that we write propositions about.
 abbrev Grid := Coords → ℕ
 
+-- Takes the region number in reading order and the position in the region in reading order.
+def reg_coords (reg : Fin 4) (n : Fin 4) : Coords := (reg / 2 * 2 + n / 2, reg % 2 * 2 + n % 2)
+
 --The equations are written this way such that SudokuRules is Decideable.
 structure SudokuRules (grid : Grid) : Prop where
   cases : ∀ c : Coords, grid c ∈ Finset.Icc 1 4
   row_check : ∀ row a b : Fin 4, a ≠ b → grid (row, a) ≠ grid (row, b)
   col_check : ∀ col a b : Fin 4, a ≠ b → grid (a, col) ≠ grid (b, col)
-  reg_check : ∀ c₁ c₂ : Coords, c₁ ≠ c₂ → c₁.1 / 2 = c₂.1 / 2 ∧ c₁.2 / 2 = c₂.2 / 2 → grid c₁ ≠ grid c₂
+  reg_check : ∀ reg a b : Fin 4, a ≠ b → grid (reg_coords reg a) ≠ grid (reg_coords reg b)
 
 --Progress represents what parts of the sudoku we do and don't know.
 abbrev Progress := List (List (Option ℕ))
