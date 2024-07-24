@@ -69,4 +69,62 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     · exact row_conflict hg (by decide) hg_2_3
     · exact row_conflict hg (by decide) hg_2_3
     · simp [hg_3_1]
-  sorry
+  apply Solvable.Set _ _ _ _ (by decide) hg_3_0
+  dsimp [Progress.set', List.get!, List.set]
+  have hg_3_3 : g (3, 3) = 4 := by
+    apply row_elim hg (by decide)
+    intro b hb
+    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    · simp [hg_3_0]
+    · simp [hg_3_1]
+    · simp [hg_3_2]
+  apply Solvable.Set _ _ _ _ (by decide) hg_3_3
+  dsimp [Progress.set', List.get!, List.set]
+  have hg_2_2 : g (2, 2) = 2 := by
+    apply reg_elim hg (by decide)
+    intro b hb
+    fin_cases b <;> simp [-ne_eq, reg_coords] at hb ⊢ <;> clear hb
+    · simp [hg_2_3]
+    · simp [hg_3_2]
+    · simp [hg_3_3]
+  apply Solvable.Set _ _ _ _ (by decide) hg_2_2
+  dsimp [Progress.set', List.get!, List.set]
+  have hg_1_1 : g (1, 1) = 3 := by
+    apply row_elim hg (by decide)
+    intro b hb
+    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    · simp [hg_1_0]
+    · simp [hg_1_2]
+    · simp [hg_1_3]
+  apply Solvable.Set _ _ _ _ (by decide) hg_1_1
+  dsimp [Progress.set', List.get!, List.set]
+  have hg_2_1 : g (2, 1) = 4 := by
+    apply col_elim hg (by decide)
+    intro b hb
+    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    · simp [hg_0_1]
+    · simp [hg_1_1]
+    · simp [hg_3_1]
+  apply Solvable.Set _ _ _ _ (by decide) hg_2_1
+  dsimp [Progress.set', List.get!, List.set]
+  have hg_0_0 : g (0, 0) = 4 := by
+    apply row_elim hg (by decide)
+    intro b hb
+    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    · simp [hg_0_1]
+    · simp [hg_0_2]
+    · simp [hg_0_3]
+  apply Solvable.Set _ _ _ _ (by decide) hg_0_0
+  dsimp [Progress.set', List.get!, List.set]
+  have hg_2_0 : g (2, 0) = 1 := by
+    apply row_elim hg (by decide)
+    intro b hb
+    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    · simp [hg_2_1]
+    · simp [hg_2_2]
+    · simp [hg_2_3]
+  apply Solvable.Set _ _ _ _ (by decide) hg_2_0
+  dsimp [Progress.set', List.get!, List.set]
+  apply Solvable.Done
+  · decide
+  · constructor <;> decide
