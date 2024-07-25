@@ -106,6 +106,4 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     · simp [hg_2_3]
   apply Solvable.Set _ _ _ _ (by decide) hg_2_0
   dsimp [Progress.set', List.get!, List.set]
-  apply Solvable.Done
-  · decide
-  · constructor <;> decide
+  finish
