@@ -1,6 +1,6 @@
 import Sudoku.Defs
 
-lemma cell_elim {g : Grid} [hg : SudokuRules g] {c : Coords} {n : ℕ} (hc : ∀ n' ∈ Finset.Icc 1 4, n' ≠ n → g c ≠ n') : g c = n := by
+lemma cell_elim {g : Grid} [hg : SudokuRules g] {c : Coords} {n : ℕ} (_ : n ∈ Finset.Icc 1 4) (hc : ∀ n' ∈ Finset.Icc 1 4, n' ≠ n → g c ≠ n') : g c = n := by
   have : ∃ (a : ℕ), g c = a := exists_eq'
   contrapose! this
   intro a
@@ -32,14 +32,14 @@ lemma row_map (g : Grid) [hg : SudokuRules g] (row : Fin 4) : Finset.map (row_em
     apply hg.cases
   · simp
 
-lemma row_elim {g : Grid} [hg : SudokuRules g] {row a : Fin 4} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_row : ∀ b ≠ a, g (row, b) ≠ n) : g (row, a) = n := by
+lemma row_elim {g : Grid} [hg : SudokuRules g] {row a : Fin 4} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_row : ∀ b ∈ Finset.univ, b ≠ a → g (row, b) ≠ n) : g (row, a) = n := by
   simp [←row_map g row, row_emb] at hn
   contrapose! hn
   intro a'
   obtain ha' | ha' := eq_or_ne a' a
   · rw [ha']
     exact hn
-  · exact h_row a' ha'
+  · exact h_row a' (Finset.mem_univ a') ha'
 
 lemma col_conflict {g : Grid} [hg : SudokuRules g] {col a b : Fin 4} (hab : a ≠ b) {n : ℕ} (hg' : g (a, col) = n) : g (b, col) ≠ n := by
   rw [←hg']
@@ -61,14 +61,14 @@ lemma col_map (g : Grid) [hg : SudokuRules g] (col : Fin 4) : Finset.map (col_em
     apply hg.cases
   · simp
 
-lemma col_elim {g : Grid} [hg : SudokuRules g] {col a : Fin 4} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_col : ∀ b ≠ a, g (b, col) ≠ n) : g (a, col) = n := by
+lemma col_elim {g : Grid} [hg : SudokuRules g] {col a : Fin 4} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_col : ∀ b ∈ Finset.univ, b ≠ a → g (b, col) ≠ n) : g (a, col) = n := by
   simp [←col_map g col, col_emb] at hn
   contrapose! hn
   intro a'
   obtain ha' | ha' := eq_or_ne a' a
   · rw [ha']
     exact hn
-  · exact h_col a' ha'
+  · exact h_col a' (Finset.mem_univ a') ha'
 
 lemma reg_coords_rw (c : Coords) : c = reg_coords (c.1 / 2 * 2 + c.2 / 2) (c.1 % 2 * 2 + c.2 % 2) := by
   unfold reg_coords
@@ -154,11 +154,11 @@ lemma reg_map (g : Grid) [hg : SudokuRules g] (reg : Fin 4) : Finset.map (reg_em
     apply hg.cases
   · simp
 
-lemma reg_elim {g : Grid} [hg : SudokuRules g] {c : Coords} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_reg : ∀ c' : Fin 4, c' ≠ c.1 % 2 * 2 + c.2 % 2 → g (reg_coords (c.1 / 2 * 2 + c.2 / 2) c') ≠ n) : g c = n := by
+lemma reg_elim {g : Grid} [hg : SudokuRules g] {c : Coords} {n : ℕ} (hn : n ∈ Finset.Icc 1 4) (h_reg : ∀ c' ∈ Finset.univ, c' ≠ c.1 % 2 * 2 + c.2 % 2 → g (reg_coords (c.1 / 2 * 2 + c.2 / 2) c') ≠ n) : g c = n := by
   simp [←reg_map g (c.1 / 2 * 2 + c.2 / 2), reg_emb] at hn
   contrapose! hn
   intro a
   obtain ha | ha := eq_or_ne a (c.1 % 2 * 2 + c.2 % 2)
   · rw [ha, ←reg_coords_rw]
     exact hn
-  · exact h_reg a ha
+  · exact h_reg a (Finset.mem_univ a) ha

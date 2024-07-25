@@ -7,6 +7,6 @@ syntax "elimination " term : tactic
 macro_rules
 | `(tactic| elimination $elim:term) => `(tactic|
   apply $elim (by decide);
-  intro b hb;
-  fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+  intro n hn hn';
+  fin_cases hn <;> simp [-ne_eq] at hn' ⊢ <;> first | (absurd hn'; rfl) | clear hn'
 )

@@ -15,7 +15,7 @@ theorem one_cell_test_solve (g : Grid) (hg : SudokuRules g)
   unfold one_cell_test
   apply Solvable.Set _ _ (0, 2) 3
   · decide
-  · apply cell_elim
+  · apply cell_elim (by decide)
     intro n hn hn'
     fin_cases hn <;> simp at hn' ⊢
     · exact row_conflict (by decide) hg_0_0
@@ -51,18 +51,14 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
   apply Solvable.Set _ _ _ _ (by decide) hg_0_3
   dsimp [Progress.set', List.get!, List.set]
   have hg_1_2 : g (1, 2) = 4 := by
-    apply cell_elim
-    intro n hn hn'
-    fin_cases hn <;> simp [-ne_eq] at hn' ⊢ <;> first | (absurd hn'; rfl) | clear hn'
+    elimination cell_elim
     · exact reg_conflict (by decide) (by decide) hg_1_3
     · exact reg_conflict (by decide) (by decide) hg_0_3
     · exact reg_conflict (by decide) (by decide) hg_0_2
   apply Solvable.Set _ _ _ _ (by decide) hg_1_2
   dsimp [Progress.set', List.get!, List.set]
   have hg_3_0 : g (3, 0) = 3 := by
-    apply reg_elim (by decide)
-    intro c hc
-    fin_cases c <;> simp [-ne_eq, reg_coords] at hc ⊢ <;> clear hc
+    elimination reg_elim <;> simp [reg_coords, -ne_eq]
     · exact row_conflict (by decide) hg_2_3
     · exact row_conflict (by decide) hg_2_3
     · simp [hg_3_1]
@@ -76,9 +72,7 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
   apply Solvable.Set _ _ _ _ (by decide) hg_3_3
   dsimp [Progress.set', List.get!, List.set]
   have hg_2_2 : g (2, 2) = 2 := by
-    apply reg_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq, reg_coords] at hb ⊢ <;> clear hb
+    elimination reg_elim <;> simp [reg_coords, -ne_eq]
     · simp [hg_2_3]
     · simp [hg_3_2]
     · simp [hg_3_3]
