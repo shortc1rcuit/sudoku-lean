@@ -1,4 +1,5 @@
 import Sudoku.Lemmas
+import Sudoku.Tactics
 
 def one_cell_test : Progress := [[some 1, some 2, none,   some 4],
                                  [some 3, some 4, some 1, some 2],
@@ -36,18 +37,14 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
     : Solvable g four_by_four_test := by
   unfold four_by_four_test
   have hg_1_3 : g (1, 3) = 1 := by
-    apply row_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination row_elim
     · simp [hg_1_0]
     · exact col_conflict (by decide) hg_0_1
     · exact col_conflict (by decide) hg_3_2
   apply Solvable.Set _ _ _ _ (by decide) hg_1_3
   dsimp [Progress.set', List.get!, List.set]
   have hg_0_3 : g (0, 3) = 2 := by
-    apply col_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination col_elim
     · simp [hg_1_3]
     · simp [hg_2_3]
     · exact row_conflict (by decide) hg_3_1
@@ -72,9 +69,7 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
   apply Solvable.Set _ _ _ _ (by decide) hg_3_0
   dsimp [Progress.set', List.get!, List.set]
   have hg_3_3 : g (3, 3) = 4 := by
-    apply row_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination row_elim
     · simp [hg_3_0]
     · simp [hg_3_1]
     · simp [hg_3_2]
@@ -90,36 +85,28 @@ theorem four_by_four_test_solve (g : Grid) (hg : SudokuRules g)
   apply Solvable.Set _ _ _ _ (by decide) hg_2_2
   dsimp [Progress.set', List.get!, List.set]
   have hg_1_1 : g (1, 1) = 3 := by
-    apply row_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination row_elim
     · simp [hg_1_0]
     · simp [hg_1_2]
     · simp [hg_1_3]
   apply Solvable.Set _ _ _ _ (by decide) hg_1_1
   dsimp [Progress.set', List.get!, List.set]
   have hg_2_1 : g (2, 1) = 4 := by
-    apply col_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination col_elim
     · simp [hg_0_1]
     · simp [hg_1_1]
     · simp [hg_3_1]
   apply Solvable.Set _ _ _ _ (by decide) hg_2_1
   dsimp [Progress.set', List.get!, List.set]
   have hg_0_0 : g (0, 0) = 4 := by
-    apply row_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination row_elim
     · simp [hg_0_1]
     · simp [hg_0_2]
     · simp [hg_0_3]
   apply Solvable.Set _ _ _ _ (by decide) hg_0_0
   dsimp [Progress.set', List.get!, List.set]
   have hg_2_0 : g (2, 0) = 1 := by
-    apply row_elim (by decide)
-    intro b hb
-    fin_cases b <;> simp [-ne_eq] at hb ⊢ <;> clear hb
+    elimination row_elim
     · simp [hg_2_1]
     · simp [hg_2_2]
     · simp [hg_2_3]
