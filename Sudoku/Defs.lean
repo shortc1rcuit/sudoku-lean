@@ -9,7 +9,7 @@ abbrev Grid := Coords → ℕ
 def reg_coords (reg : Fin 4) (n : Fin 4) : Coords := (reg / 2 * 2 + n / 2, reg % 2 * 2 + n % 2)
 
 --The equations are written this way such that SudokuRules is Decideable.
-structure SudokuRules (grid : Grid) : Prop where
+class SudokuRules (grid : Grid) : Prop where
   cases : ∀ c : Coords, grid c ∈ Finset.Icc 1 4
   row_check : ∀ row a b : Fin 4, a ≠ b → grid (row, a) ≠ grid (row, b)
   col_check : ∀ col a b : Fin 4, a ≠ b → grid (a, col) ≠ grid (b, col)
